@@ -14,11 +14,15 @@ class Snake {
         void Move(Vector2 direction)
         {
             _body[0] = Vector2Add(_body[0], Vector2Scale(direction, 10));
+        
+            // shift body parts forward from tail to head
+            // pop back
+            // push new head to front
         }
 
         void Draw()
         {
-            for(int i = 0; i < _body.size(); i++)
+            for(unsigned int i = 0; i < _body.size(); i++)
             {
                 DrawRectangle(_body[i].x,_body[i].y, 10, 10, WHITE);
             }

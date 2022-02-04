@@ -15,7 +15,15 @@ class Game
         {
             Vector2 input = GetInput();
 
+            // if no doot is on the map, add one to a random position
+
             _snake.Move(input);
+
+            // if snake head is touching a doot
+            //      grow the snake next frame
+
+            // if snake head is touching its own body
+            //      game over man
         }
 
         void Draw()
