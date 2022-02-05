@@ -1,76 +1,61 @@
 #include "raylib.h"
-#include "doot.cpp"
-#include "snake.cpp"
+#include "GameScene.h"
 
-class GameScene
+GameScene::GameScene(int width, int height)
 {
-    public:
-        GameScene(int width, int height) : _snake(Vector2{})
-        {
-            _width = width;
-            _height = height;
-            _snake = Snake(Vector2{(float)width/2, (float)height/2});
-            _doot = Doot();
-            _doot.PlaceRandomly();
-        }
+    _width = width;
+    _height = height;
+    _snake = Snake(Vector2{(float)width/2, (float)height/2});
+    _doot = Doot();
+    _doot.PlaceRandomly();
+}
 
-        void Update()
-        {
-            _timeSinceLastTick += GetFrameTime();  
+void GameScene::Update()
+{
+    _timeSinceLastTick += GetFrameTime();  
 
-            _snake.CalculateVelocity();
+    _snake.CalculateVelocity();
 
-            if(_timeSinceLastTick < _timeBetweenTicks)
-                return;
+    if(_timeSinceLastTick < _timeBetweenTicks)
+        return;
 
-            _timeSinceLastTick -= _timeBetweenTicks;
-            
-            _snake.MoveHead();
-
-            if(_snake.IsTouching(_doot.GetPosition()))
-            {
-                _doot.PlaceRandomly();
-                SpeedUp();
-            }
-            else
-            {
-                _snake.MoveTail();
-            }
-        }
-
-        void Draw()
-        {
-            _snake.Draw();
-            _doot.Draw();
-        }
-
-        GameScene* GetNext()
-        {
-            if(IsGameOver())
-            {
-                return new GameScene(_width, _height);
-            }
-
-            return this;
-        }
+    _timeSinceLastTick -= _timeBetweenTicks;
     
-    private:
-        Snake _snake;
-        Doot _doot;
+    _snake.MoveHead();
 
-        int _width;
-        int _height;
+    if(_snake.IsTouching(_doot.GetPosition()))
+    {
+        _doot.PlaceRandomly();
+        SpeedUp();
+    }
+    else
+    {
+        _snake.MoveTail();
+    }
+}
 
-        float _timeSinceLastTick = 0;
-        float _timeBetweenTicks = 1;
+void GameScene::Draw()
+{
+    _snake.Draw();
+    _doot.Draw();
+}
 
-        void SpeedUp()
-        {
-            _timeBetweenTicks *= 0.9f;
-        }
+GameScene* GameScene::GetNext()
+{
+    if(IsGameOver())
+    {
+        return new GameScene(_width, _height);
+    }
 
-        bool IsGameOver()
-        {
-            return _snake.IsOutOfBounds(_width, _height) || _snake.IsHeadTouchingBody();
-        }
-};
+    return this;
+}
+
+void GameScene::SpeedUp()
+{
+    _timeBetweenTicks *= 0.9f;
+}
+
+bool GameScene::IsGameOver()
+{
+    return _snake.IsOutOfBounds(_width, _height) || _snake.IsHeadTouchingBody();
+}

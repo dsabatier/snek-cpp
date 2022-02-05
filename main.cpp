@@ -1,7 +1,7 @@
 #include <cstdio>
 #include "raylib.h"
 #include "raymath.h"
-#include "src/gamescene.cpp"
+#include "src/GameScene.cpp"
 
 int main()
 {
@@ -18,7 +18,7 @@ int main()
     // Sound thud = LoadSound("res/thud.wav");
 
     //Scene* currentScene = new GameScene(width, height);
-    GameScene* currentScene = new GameScene(width, height);
+    Scene* currentScene = new GameScene(width, height);
 
     while(!WindowShouldClose())
     {
