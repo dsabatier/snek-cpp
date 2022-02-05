@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include <cstdio>
 #include "src/snake.cpp"
+#include "src/doot.cpp"
 
 class Game
 {
@@ -9,40 +10,53 @@ class Game
         Game()
         {
             printf("Started a new game");
+            _doot.PlaceRandomly();
         }
 
         void Update()
         {
-            Vector2 input = GetInput();
+            _snake.CalculateVelocity();
 
-            // if no doot is on the map, add one to a random position
+            _timeSinceLastTick += GetFrameTime();
 
-            _snake.Move(input);
+            if(_timeSinceLastTick < _timeBetweenTicks)
+                return;
 
-            // if snake head is touching a doot
-            //      grow the snake next frame
+            _timeSinceLastTick -= _timeBetweenTicks;
 
-            // if snake head is touching its own body
-            //      game over man
+            _snake.Move();
+
+            if(IsSnakeTouchingDoot())
+            {
+                _snake.Grow();
+                _doot.PlaceRandomly();
+                _timeBetweenTicks *= 0.9f;
+            }
+                
+            if(_snake.IsHeadTouchingBody())
+            {
+                // game over, reset
+                _timeBetweenTicks = 5;
+            }
         }
 
         void Draw()
         {
             _snake.Draw();
+            _doot.Draw();
         }
 
     private:
         Snake _snake;
+        Doot _doot;
+        float _timeSinceLastTick = 0;
+        float _timeBetweenTicks = 1;
 
-        Vector2 GetInput() 
+        bool IsSnakeTouchingDoot()
         {
-            Vector2 direction{};
-            if(IsKeyPressed(KEY_LEFT)) direction.x -= 1.0;
-            if(IsKeyPressed(KEY_RIGHT)) direction.x += 1.0;
-            if(IsKeyPressed(KEY_UP)) direction.y -= 1.0;
-            if(IsKeyPressed(KEY_DOWN)) direction.y += 1.0;
+            Vector2 snakePosition = _snake.GetPosition();
+            Vector2 dootPosition = _doot.GetPosition();
 
-            return direction;
+            return snakePosition.x == dootPosition.x && snakePosition.y == dootPosition.y;
         }
-
 };

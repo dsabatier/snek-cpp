@@ -8,16 +8,41 @@ class Snake {
         Snake()
         {
             printf("Created player");
-            _body.push_back(Vector2{10, 10});
+            _body.push_front(Vector2{120, 120});
         }
 
-        void Move(Vector2 direction)
+        void CalculateVelocity()
         {
-            _body[0] = Vector2Add(_body[0], Vector2Scale(direction, 10));
+            Vector2 input = GetInput();
+
+            if(input.x == 0 && input.y == 0)
+                return;
+
+            _velocity = input;
+        }
+
+        void Move()
+        {             
+            _body.push_front(
+                Vector2Add(_body[0], Vector2Scale(_velocity, 10)
+            ));
+
+            if(!_growNextFrame)
+                _body.pop_back();
         
-            // shift body parts forward from tail to head
-            // pop back
-            // push new head to front
+            _growNextFrame = false;
+
+            
+            printf("Head: %3.1f, %3.1f \n", _body[0].x, _body[0].y);
+            for(int i = 1; i < _body.size(); i++)
+            {
+                printf("%i: %3.1f, %3.1f \n", i, _body[i].x, _body[i].y);
+            }
+        }
+
+        void Grow()
+        {
+            _growNextFrame = true;
         }
 
         void Draw()
@@ -28,7 +53,36 @@ class Snake {
             }
         }
 
+        Vector2 GetPosition()
+        {
+            return _body[0];
+        }
+
+        bool IsHeadTouchingBody()
+        {
+            for(int i = 1; i < _body.size(); i++)
+            {
+                if(_body[0].x == _body[i].x && _body[0].y == _body[i].y)
+                    return true;
+            }
+
+            return false;
+        }
+
     private:
+        bool _growNextFrame = false;
         std::deque<Vector2> _body{};
-        Vector2 _position;
+
+        Vector2 _velocity{1, 0};
+
+        Vector2 GetInput() 
+        {
+            Vector2 direction{};
+            if(IsKeyDown(KEY_LEFT)) direction.x -= 1.0;
+            if(IsKeyDown(KEY_RIGHT)) direction.x += 1.0;
+            if(IsKeyDown(KEY_UP)) direction.y -= 1.0;
+            if(IsKeyDown(KEY_DOWN)) direction.y += 1.0;
+
+            return direction;
+        }
 };
