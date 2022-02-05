@@ -5,10 +5,10 @@
 
 class Snake {
     public:
-        Snake()
+        Snake(Vector2 startingPosition)
         {
             printf("Created player");
-            _body.push_front(Vector2{120, 120});
+            _body.push_front(startingPosition);
         }
 
         void CalculateVelocity()
@@ -21,18 +21,12 @@ class Snake {
             _velocity = input;
         }
 
-        void Move()
+        void MoveHead()
         {             
             _body.push_front(
                 Vector2Add(_body[0], Vector2Scale(_velocity, 10)
             ));
-
-            if(!_growNextFrame)
-                _body.pop_back();
-        
-            _growNextFrame = false;
-
-            
+    
             printf("Head: %3.1f, %3.1f \n", _body[0].x, _body[0].y);
             for(int i = 1; i < _body.size(); i++)
             {
@@ -40,9 +34,20 @@ class Snake {
             }
         }
 
-        void Grow()
+        void MoveTail()
         {
-            _growNextFrame = true;
+            _body.pop_back();
+        }
+
+        bool IsTouching(Vector2 point)
+        {
+            return _body[0].x == point.x && _body[0].y == point.y;
+        }
+
+        bool IsOutOfBounds(int width, int height)
+        {
+            Vector2 position = GetPosition();
+            return position.x < 0 || position.x >= width || position.y < 0 || position.y >= height;
         }
 
         void Draw()
@@ -70,18 +75,17 @@ class Snake {
         }
 
     private:
-        bool _growNextFrame = false;
         std::deque<Vector2> _body{};
 
-        Vector2 _velocity{1, 0};
+        Vector2 _velocity{0, 0};
 
         Vector2 GetInput() 
         {
             Vector2 direction{};
-            if(IsKeyDown(KEY_LEFT)) direction.x -= 1.0;
-            if(IsKeyDown(KEY_RIGHT)) direction.x += 1.0;
-            if(IsKeyDown(KEY_UP)) direction.y -= 1.0;
-            if(IsKeyDown(KEY_DOWN)) direction.y += 1.0;
+            if(IsKeyDown(KEY_LEFT) && _velocity.x != 1) direction.x -= 1.0;
+            else if(IsKeyDown(KEY_RIGHT) && _velocity.x != -1) direction.x += 1.0;
+            else if(IsKeyDown(KEY_UP) && _velocity.y != 1) direction.y -= 1.0;
+            else if(IsKeyDown(KEY_DOWN) && _velocity.y != -1) direction.y += 1.0;
 
             return direction;
         }

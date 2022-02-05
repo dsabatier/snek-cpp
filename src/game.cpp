@@ -7,8 +7,13 @@
 class Game
 {
     public:
-        Game()
+        Game(Snake snake, Doot doot, int width, int height) : _snake(Vector2{0,0}), _doot()
         {
+            _snake = snake;
+            _doot = doot;
+            _width = width;
+            _height = height;
+
             printf("Started a new game");
             _doot.PlaceRandomly();
         }
@@ -23,20 +28,17 @@ class Game
                 return;
 
             _timeSinceLastTick -= _timeBetweenTicks;
+            
+            _snake.MoveHead();
 
-            _snake.Move();
-
-            if(IsSnakeTouchingDoot())
+            if(_snake.IsTouching(_doot.GetPosition()))
             {
-                _snake.Grow();
                 _doot.PlaceRandomly();
-                _timeBetweenTicks *= 0.9f;
+                SpeedUp();
             }
-                
-            if(_snake.IsHeadTouchingBody())
+            else
             {
-                // game over, reset
-                _timeBetweenTicks = 5;
+                _snake.MoveTail();
             }
         }
 
@@ -46,17 +48,21 @@ class Game
             _doot.Draw();
         }
 
+        bool IsGameOver()
+        {
+            return _snake.IsOutOfBounds(_width, _height) || _snake.IsHeadTouchingBody();
+        }
+
     private:
         Snake _snake;
         Doot _doot;
+        int _width;
+        int _height;
         float _timeSinceLastTick = 0;
         float _timeBetweenTicks = 1;
 
-        bool IsSnakeTouchingDoot()
+        void SpeedUp()
         {
-            Vector2 snakePosition = _snake.GetPosition();
-            Vector2 dootPosition = _doot.GetPosition();
-
-            return snakePosition.x == dootPosition.x && snakePosition.y == dootPosition.y;
+            _timeBetweenTicks *= 0.9f;
         }
 };
