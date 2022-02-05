@@ -3,7 +3,8 @@
 #include <deque>
 #include <cstdio>
 
-class Snake {
+class Snake 
+{
     public:
         Snake(Vector2 startingPosition)
         {
@@ -28,7 +29,7 @@ class Snake {
             ));
     
             printf("Head: %3.1f, %3.1f \n", _body[0].x, _body[0].y);
-            for(int i = 1; i < _body.size(); i++)
+            for(unsigned int i = 1; i < _body.size(); i++)
             {
                 printf("%i: %3.1f, %3.1f \n", i, _body[i].x, _body[i].y);
             }
@@ -47,7 +48,7 @@ class Snake {
         bool IsOutOfBounds(int width, int height)
         {
             Vector2 position = GetPosition();
-            return position.x < 0 || position.x >= width || position.y < 0 || position.y >= height;
+            return position.x < 0 || position.x > width || position.y < 0 || position.y >= height;
         }
 
         void Draw()
@@ -65,7 +66,7 @@ class Snake {
 
         bool IsHeadTouchingBody()
         {
-            for(int i = 1; i < _body.size(); i++)
+            for(unsigned int i = 1; i < _body.size(); i++)
             {
                 if(_body[0].x == _body[i].x && _body[0].y == _body[i].y)
                     return true;

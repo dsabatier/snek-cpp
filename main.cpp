@@ -1,15 +1,15 @@
 #include <cstdio>
 #include "raylib.h"
 #include "raymath.h"
-#include "src/game.cpp"
+#include "src/gamescene.cpp"
 
 int main()
 {
     // Init
-    const int width = 120;
-    const int height = 120;
+    const int width = 140;
+    const int height = 140;
 
-    InitWindow(width, height, "SNEK");
+    InitWindow(width, height, "SNEK ATE DOOT");
     SetTargetFPS(60);
 
     InitAudioDevice();
@@ -17,25 +17,17 @@ int main()
     // Load
     // Sound thud = LoadSound("res/thud.wav");
 
-    // Gameplay scene
-    Snake snake = Snake(Vector2{width/2, height/2});
-    Doot doot = Doot();
-    Game game = Game{snake, doot, width, height};
+    //Scene* currentScene = new GameScene(width, height);
+    GameScene* currentScene = new GameScene(width, height);
 
     while(!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(BLACK);
 
-        if(game.IsGameOver())
-        {
-            snake = Snake(Vector2{width/2, height/2});
-            doot = Doot();
-            game = Game{snake, doot, width, height};
-        }
-            
-        game.Update();
-        game.Draw();
+        currentScene->Update();
+        currentScene->Draw();
+        currentScene = currentScene->GetNext();
 
         EndDrawing();
     }
@@ -47,4 +39,3 @@ int main()
 
     return 0;
 }
-
